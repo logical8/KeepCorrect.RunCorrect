@@ -1,0 +1,66 @@
+# ASP.NET
+# Build and test ASP.NET projects.
+# Add steps that publish symbols, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
+
+trigger:
+- master
+
+pool: Default
+
+variables:
+  buildConfiguration: 'Release'
+
+steps:
+# - task: UseDotNet@2
+#   inputs:
+#     packageType: 'sdk'
+#     version: '5.0.x'
+# - task: DotNetCoreCLI@2
+#   inputs:
+#     command: 'build'
+#     projects: '**/*.csproj'
+#     workingDirectory: '$(System.DefaultWorkingDirectory)'
+# - task: DotNetCoreCLI@2
+#   inputs:
+#     command: publish
+#     publishWebProjects: True
+#     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+#     zipAfterPublish: True
+
+#   # this code takes all the files in $(Build.ArtifactStagingDirectory) and uploads them as an artifact of your build.
+# - task: PublishBuildArtifacts@1
+#   inputs:
+#     pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+#     artifactName: 'KeepCorrect.runcorrect'
+- task: Docker@2
+  inputs:
+    containerRegistry: dockerhub.keepcorrect.com
+    command: 'login'
+  displayName: Login in Container Registry
+- task: DockerInstaller@0
+  inputs:
+    dockerVersion: '17.09.0-ce'
+
+- script: docker build -t keepcorrect.runcorrect .
+#docker build -t ${{ variables.imageName }} -f ${{ variables.dockerFilePath }} .
+  workingDirectory: $(Build.Repository.LocalPath)
+  displayName: Build a container 
+  
+- script: docker tag keepcorrect.runcorrect:latest dockerhub.keepcorrect.com/runcorrect
+  displayName: Tag the container 
+
+- script: docker push dockerhub.keepcorrect.com/runcorrect:latest
+  displayName: Push the container 
+
+#остановливаем старый контейнер и удаляем его
+- script: docker stop runcorrect || true && docker rm runcorrect || true
+  displayName: Stop and remove old container
+
+#ждем пол минутки пока старый контейнер сдохнет:)
+# - bash: |
+#     sleep 10
+#   displayName: Wait for 10 seconds 
+
+- script: docker run -d --name runcorrect -p 127.0.0.1:32780:80/tcp dockerhub.keepcorrect.com/runcorrect:latest
+  displayName: Run the container 
