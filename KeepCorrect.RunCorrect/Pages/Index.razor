@@ -49,7 +49,7 @@
         var totalSeconds = _minutes.Sum() * 60 + _seconds.Sum();
         var avgSeconds = (decimal)totalSeconds / _intervalCount;
         _resultMinutes = (int)Math.Round(avgSeconds / 60, 0, MidpointRounding.AwayFromZero);//(int)avgSeconds / 60;
-        var t = avgSeconds % 60.00m;
+        var test = avgSeconds % 60.00m;
         var g = Math.Round(avgSeconds % 60.00m, 0, MidpointRounding.AwayFromZero);
         var h = (int)Math.Round(avgSeconds % 60.00m, 0, MidpointRounding.AwayFromZero);
         _resultSeconds = (int)Math.Round(avgSeconds % 60, 0, MidpointRounding.AwayFromZero);
