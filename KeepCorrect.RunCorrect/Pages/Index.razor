@@ -27,7 +27,11 @@
 
     private void onchange_n(ChangeEventArgs e)
     {
-        if (int.TryParse(e.Value!.ToString(), out var n)) _intervalCount = n;
+        if (int.TryParse(e.Value!.ToString(), out var n))
+        {
+            if (n > 1000) n = 1000;
+            _intervalCount = n;
+        }
         _minutes.Clear();
         _seconds.Clear();
         _minutes.AddRange(Enumerable.Range(0, _intervalCount).Select(_ => 0));
@@ -40,7 +44,11 @@
     private void RecalculateMinutes(int i, ChangeEventArgs e)
     {
         var n = 0;
-        if (int.TryParse(e.Value!.ToString(), out var auxn)) n = auxn;
+        if (int.TryParse(e.Value!.ToString(), out var auxn))
+        {
+            if (auxn > 1000) auxn = 1000;
+            n = auxn;
+        }
         _minutes[i] = n;
         CalculateResult();
     }
@@ -57,7 +65,11 @@
     private void RecalculateSeconds(int i, ChangeEventArgs e)
     {
         var n = 0;
-        if (int.TryParse(e.Value!.ToString(), out var auxn)) n = auxn;
+        if (int.TryParse(e.Value!.ToString(), out var auxn))
+        {
+            if (auxn > 59) auxn = 59;
+            n = auxn;
+        }
         _seconds[i] = n;
         CalculateResult();
     }
