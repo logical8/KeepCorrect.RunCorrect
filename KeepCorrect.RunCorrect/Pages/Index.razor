@@ -4,18 +4,18 @@
 
 <h1>Let's calculate your average pace!</h1>
 <br/>
-<h3>Enter number of intervals: <input type="number" value="@_intervalCount" @oninput="onchange_n" onfocus="this.select();"/> </h3>
+<h3>Enter number of intervals: <input type="number" class="input-number" value="@_intervalCount" @oninput="onchange_n" onfocus="this.select();"/> </h3>
 <br/>
 @for (var i = 0; i < _intervalCount; i++)
 {
     var ii = i;
-    <input type="number" value="@_minutes[ii]" @oninput="e => RecalculateMinutes(ii, e)" onfocus="this.select();"/>
+    <input type="number" class="input-number" value="@_minutes[ii]" @oninput="e => RecalculateMinutes(ii, e)" onfocus="this.select();"/>
     @::
-    <input type="number" value="@_seconds[ii]" @oninput="e => RecalculateSeconds(ii, e)" onfocus="this.select();"/>
+    <input type="number" class="input-number" value="@_seconds[ii]" @oninput="e => RecalculateSeconds(ii, e)" onfocus="this.select();"/>
     <br/>
 }
 <br/>
-<h3>Average pace: @_resultMinutes:@_resultSeconds.ToString("00")</h3> 
+<h3>Average pace: @_resultMinutes:@_resultSeconds.ToString("00")</h3>
 
 @code {
     private int _intervalCount;
@@ -25,7 +25,8 @@
     private int _resultSeconds;
 
 
-    private void onchange_n(ChangeEventArgs e){
+    private void onchange_n(ChangeEventArgs e)
+    {
         if (int.TryParse(e.Value!.ToString(), out var n)) _intervalCount = n;
         _minutes.Clear();
         _seconds.Clear();
@@ -48,11 +49,8 @@
     {
         var totalSeconds = _minutes.Sum() * 60 + _seconds.Sum();
         var avgSeconds = (decimal)totalSeconds / _intervalCount;
-        _resultMinutes = (int)Math.Round(avgSeconds / 60, 0, MidpointRounding.AwayFromZero);//(int)avgSeconds / 60;
-        var test = avgSeconds % 60.00m;
-        var g = Math.Round(avgSeconds % 60.00m, 0, MidpointRounding.AwayFromZero);
-        var h = (int)Math.Round(avgSeconds % 60.00m, 0, MidpointRounding.AwayFromZero);
-        _resultSeconds = (int)Math.Round(avgSeconds % 60, 0, MidpointRounding.AwayFromZero);
+        _resultMinutes = (int)avgSeconds / 60;
+        _resultSeconds = (int)avgSeconds % 60;
     }
 
 
