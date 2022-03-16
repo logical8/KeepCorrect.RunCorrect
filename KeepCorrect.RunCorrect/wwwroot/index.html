@@ -9,6 +9,33 @@
     <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
     <link href="css/app.css" rel="stylesheet" />
     <link href="KeepCorrect.RunCorrect.styles.css" rel="stylesheet" />
+    <script>
+        function CorrectSeconds(input) {
+            let seconds = input.value;
+            if (seconds.length < 2) {
+                input.value = "0" + seconds;
+            }
+            if(!isNaN(seconds) && seconds.length === 1) {
+                input.value = "0" + seconds;
+            }
+            if(seconds < 0){
+                input.value = 0
+            }
+            if(seconds > 59){
+                input.value = 59;
+            }
+        }
+        
+        function CorrectMinutes(input){
+            let minutes = input.value;
+            if(isNaN(minutes) || minutes.length === 0){
+                input.value = "0";
+            }
+            if(minutes < 0){
+                input.value = 0
+            }
+        }
+    </script>
 </head>
 
 <body>

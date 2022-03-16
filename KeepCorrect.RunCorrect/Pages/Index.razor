@@ -9,20 +9,20 @@
 @for (var i = 0; i < _intervalCount; i++)
 {
     var ii = i;
-    <input type="number" class="input-number" value="@_minutes[ii]" @oninput="e => RecalculateMinutes(ii, e)" onfocus="this.select();"/>
+    <input type="number" class="input-number minutes" value="@_minutes[ii]" @oninput="e => RecalculateMinutes(ii, e)" onfocus="this.select();" onblur="CorrectMinutes(this)"/>
     @::
-    <input type="number" class="input-number" value="@_seconds[ii]" @oninput="e => RecalculateSeconds(ii, e)" onfocus="this.select();"/>
+    <input type="number" class="input-number seconds" value="@_seconds[ii]" @oninput="e => RecalculateSeconds(ii, e)" onfocus="this.select();" onblur="CorrectSeconds(this)" onchange="CorrectSeconds(this)"/>
     <br/>
 }
 <br/>
-<h3>Average pace: @_resultMinutes:@_resultSeconds.ToString("00")</h3>
+<h3>Average pace: <b>@AveragePace</b></h3>
 
 @code {
     private int _intervalCount;
     private readonly List<int> _minutes = new List<int>();
     private readonly List<int> _seconds = new List<int>();
-    private int _resultMinutes;
-    private int _resultSeconds;
+    private TimeSpan _result;
+    private string AveragePace => $"{(int)_result.TotalMinutes}:{_result.Seconds:00}";
 
 
     private void onchange_n(ChangeEventArgs e)
@@ -36,8 +36,7 @@
         _seconds.Clear();
         _minutes.AddRange(Enumerable.Range(0, _intervalCount).Select(_ => 0));
         _seconds.AddRange(Enumerable.Range(0, _intervalCount).Select(_ => 0));
-        _resultMinutes = 0;
-        _resultSeconds = 0;
+        _result = TimeSpan.Zero;
         StateHasChanged();
     }
 
@@ -46,7 +45,6 @@
         var n = 0;
         if (int.TryParse(e.Value!.ToString(), out var auxn))
         {
-            if (auxn > 1000) auxn = 1000;
             n = auxn;
         }
         _minutes[i] = n;
@@ -56,9 +54,8 @@
     private void CalculateResult()
     {
         var totalSeconds = _minutes.Sum() * 60 + _seconds.Sum();
-        var avgSeconds = (decimal)totalSeconds / _intervalCount;
-        _resultMinutes = (int)avgSeconds / 60;
-        _resultSeconds = (int)avgSeconds % 60;
+        var avgSeconds = (double)totalSeconds / _intervalCount;
+        _result  = TimeSpan.FromSeconds(Math.Round(avgSeconds));
     }
 
 
