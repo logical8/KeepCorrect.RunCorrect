@@ -4,23 +4,23 @@
 
 <h1>Let's calculate your average pace!</h1>
 <br/>
-<h3>Enter number of intervals: <input type="number" class="input-number" value="@_intervalCount" @oninput="onchange_n" onfocus="this.select();"/> </h3>
+<h3>Enter number of intervals: <input type="number" class="input-number" value="@_intervalCount" @oninput="onchange_n"/> </h3>
 <br/>
 @for (var i = 0; i < _intervalCount; i++)
 {
     var ii = i;
-    <input type="number" class="input-number minutes" value="@_minutes[ii]" @oninput="e => RecalculateMinutes(ii, e)" onfocus="this.select();" onblur="CorrectMinutes(this)"/>
+    <input type="number" class="input-number minutes" value="@_minutes[ii]" @oninput="e => RecalculateMinutes(ii, e)" onblur="CorrectMinutes(this)" onchange="CorrectMinutes(this)"/>
     @::
-    <input type="number" class="input-number seconds" value="@_seconds[ii]" @oninput="e => RecalculateSeconds(ii, e)" onfocus="this.select();" onblur="CorrectSeconds(this)" onchange="CorrectSeconds(this)"/>
+    <input type="number" class="input-number seconds" value="@_seconds[ii]" @oninput="e => RecalculateSeconds(ii, e)" onblur="CorrectSeconds(this)" onchange="CorrectSeconds(this)"/>
     <br/>
 }
 <br/>
 <h3>Average pace: <b>@AveragePace</b></h3>
 
 @code {
-    private int _intervalCount;
-    private readonly List<int> _minutes = new List<int>();
-    private readonly List<int> _seconds = new List<int>();
+    private int? _intervalCount;
+    private readonly List<int?> _minutes = new();
+    private readonly List<int?> _seconds = new();
     private TimeSpan _result;
     private string AveragePace => $"{(int)_result.TotalMinutes}:{_result.Seconds:00}";
 
@@ -34,8 +34,8 @@
         }
         _minutes.Clear();
         _seconds.Clear();
-        _minutes.AddRange(Enumerable.Range(0, _intervalCount).Select(_ => 0));
-        _seconds.AddRange(Enumerable.Range(0, _intervalCount).Select(_ => 0));
+        _minutes.AddRange(Enumerable.Range(0, _intervalCount ?? 0).Select<int, int?>(_ => null));
+        _seconds.AddRange(Enumerable.Range(0, _intervalCount ?? 0).Select<int, int?>(_ => null));
         _result = TimeSpan.Zero;
         StateHasChanged();
     }
@@ -45,6 +45,7 @@
         var n = 0;
         if (int.TryParse(e.Value!.ToString(), out var auxn))
         {
+            if (auxn < 0) auxn = 0;
             n = auxn;
         }
         _minutes[i] = n;
@@ -54,7 +55,7 @@
     private void CalculateResult()
     {
         var totalSeconds = _minutes.Sum() * 60 + _seconds.Sum();
-        var avgSeconds = (double)totalSeconds / _intervalCount;
+        var avgSeconds = (double)(totalSeconds ?? 0) / (_intervalCount ?? 0);
         _result  = TimeSpan.FromSeconds(Math.Round(avgSeconds));
     }
 
@@ -64,6 +65,7 @@
         var n = 0;
         if (int.TryParse(e.Value!.ToString(), out var auxn))
         {
+            if (auxn < 0) auxn = 0;
             if (auxn > 59) auxn = 59;
             n = auxn;
         }
