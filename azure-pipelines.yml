@@ -35,7 +35,7 @@ steps:
 #     artifactName: 'KeepCorrect.runcorrect'
 - task: Docker@2
   inputs:
-    containerRegistry: dockerhub.keepcorrect.com
+    containerRegistry: vps-18e68fd6.vps.ovh.net:5000 #dockerhub.keepcorrect.com
     command: 'login'
   displayName: Login in Container Registry
 - task: DockerInstaller@0
@@ -47,10 +47,10 @@ steps:
   workingDirectory: $(Build.Repository.LocalPath)
   displayName: Build a container 
   
-- script: docker tag keepcorrect.runcorrect:latest dockerhub.keepcorrect.com/runcorrect
+- script: docker tag keepcorrect.runcorrect:latest vps-18e68fd6.vps.ovh.net:5000/runcorrect
   displayName: Tag the container 
 
-- script: docker push dockerhub.keepcorrect.com/runcorrect:latest
+- script: docker push vps-18e68fd6.vps.ovh.net:5000/runcorrect:latest
   displayName: Push the container 
 
 #остановливаем старый контейнер и удаляем его
@@ -62,5 +62,5 @@ steps:
 #     sleep 10
 #   displayName: Wait for 10 seconds 
 
-- script: docker run -d --name runcorrect -p 127.0.0.1:32780:80/tcp dockerhub.keepcorrect.com/runcorrect:latest
+- script: docker run -d --name runcorrect -p 127.0.0.1:32780:80/tcp vps-18e68fd6.vps.ovh.net:5000/runcorrect:latest
   displayName: Run the container 
