@@ -62,5 +62,5 @@ steps:
 #     sleep 10
 #   displayName: Wait for 10 seconds 
 
-- script: docker run -d --name runcorrect -p 127.0.0.1:32780:80/tcp dockerhub.keepcorrect.com/runcorrect:latest
+- script: docker run -d --restart always --name runcorrect -p 127.0.0.1:32780:80/tcp dockerhub.keepcorrect.com/runcorrect:latest
   displayName: Run the container 
